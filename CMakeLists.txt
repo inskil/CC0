@@ -18,17 +18,8 @@ set(lib_src
         analyser/analyser.cpp
         type/instruction.h
 		type/varstable.h
-        )
 
-set(main_src
-        main.cpp
-        fmts.hpp
-        )
-
-add_library(${PROJECT_LIB} ${lib_src})
-
-add_library(lib_src
-        src/util/print.hpp
+		src/util/print.hpp
 		src/util/tuple_visit.hpp
 		src/util/util.hpp
 
@@ -45,6 +36,13 @@ add_library(lib_src
 		src/vm.h
 		src/vm.cpp
         )
+
+set(main_src
+        main.cpp
+        fmts.hpp
+        )
+
+add_library(${PROJECT_LIB} ${lib_src})
 
 add_executable(${PROJECT_EXE} ${main_src})
 
