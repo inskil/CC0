@@ -27,7 +27,7 @@ set(main_src
 
 add_library(${PROJECT_LIB} ${lib_src})
 
-add_library(LIB_SRC
+add_library(lib_src
         src/util/print.hpp
 		src/util/tuple_visit.hpp
 		src/util/util.hpp

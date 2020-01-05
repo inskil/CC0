@@ -602,6 +602,7 @@ namespace cc0 {
             return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrIncompleteExpression);
 
         int32_t val;
+        char gets;
         switch (next.value().GetType()) {
             // 这里和 <语句序列> 类似，需要根据预读结果调用不同的子程序
             // 但是要注意 default 返回的是一个编译错误
@@ -617,8 +618,9 @@ namespace cc0 {
                 addInstruction(V, LOADC, _nextConstIndex - 1);
                 _expression_level.back() = D;
                 break;
-            case CHAR:
-                val = std::any_cast<int32_t>(next.value().GetValue());
+            case CHAR_LIT:
+                gets = next.value().GetValueString().front();
+                val = gets;
                 addInstruction(C, BIPUSH, val);
                 addInstruction(V, I2D, 0);
                 break;
@@ -885,14 +887,26 @@ namespace cc0 {
                 if (!next.has_value())
                     return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoRightBracket);
 
-                // <表达式>
-                auto err = analyseExpression(N);
-                if (err.has_value())
-                    return err;
+                next = nextToken();
+                if (next.value().GetType() == STRING) {
+                    auto str = next.value().GetValueString();
+                    str = str.substr(1);
+                    str.pop_back();
+                    auto index = addConst(str);
+                    addInstruction(V,LOADC,index);
+                    addInstruction(V,SPRINT,0);
+                } else {
+                    unreadToken();
+                    // <表达式>
+                    auto err = analyseExpression(N);
+                    if (err.has_value())
+                        return err;
 
-                auto ty = _expression_level.back();
+                    auto ty = _expression_level.back();
 
-                addInstruction(ty, TPRINT, 0);
+                    addInstruction(ty, TPRINT, 0);
+                }
+
 
                 next = nextToken();  //pre )
             }
@@ -1241,5 +1255,10 @@ namespace cc0 {
         } else {
             _current_function.back().assignVar(s);
         }
+    }
+
+    int32_t Analyser::addConst(const std::string &s) {
+        _constants.emplace_back(S, s, _nextConstIndex++);
+        return _nextConstIndex - 1;
     }
 }

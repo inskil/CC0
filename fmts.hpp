@@ -344,7 +344,7 @@ namespace fmt {
                     name = "istore";
                     break;
                 case cc0::CSTORE:
-                    name = "cstore";
+                    name = "astore";
                     break;
                 case cc0::DSTORE:
                     name = "dstore";

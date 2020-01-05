@@ -166,5 +166,7 @@ namespace cc0 {
         bool canReDefine(const std::string &s);
 
         void assignVar(const std::string &s);
+
+        int32_t addConst(const std::string &s);
     };
 }
